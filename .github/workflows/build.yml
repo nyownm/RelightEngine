@@ -1,0 +1,70 @@
+name: Build Project
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    permissions: write-all
+    name: "Build ${{ matrix.platform }} in ${{ matrix.build_type }}"
+    strategy:
+      matrix:
+        platform: [ windows, macos ]
+        build_type: [ Debug, Release ]
+    env:
+      PARALLEL: -j 2
+    runs-on: [ self-hosted, "${{ matrix.platform }}" ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: "recursive"
+      - if: ${{ matrix.platform == 'ubuntu' }}
+        name: Install RandR headers
+        run: |
+          sudo apt-get update
+          sudo apt install xorg-dev libglu1-mesa-dev
+      - name: Configure
+        run: cmake -H"." -B"build/${{ matrix.platform }}" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DLUMOS_VALIDATION_LAYERS=ON
+      - name: "Build ${{ matrix.platform }} in ${{ matrix.build_type }}"
+        run: cmake --build "build/${{ matrix.platform }}" --target distribution --config ${{ matrix.build_type }} ${{ env.PARALLEL }}
+      - name: "Upload binaries to release"
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: "Build-${{github.run_number}}"
+          file: build/${{ matrix.platform }}/bin/*.zip
+          file_glob: true
+          overwrite: true
+
+  build_android:
+    permissions: write-all
+    name: "Build Android in ${{ matrix.build_type }}"
+    strategy:
+      matrix:
+        platform: [ windows ]
+        build_type: [ Debug, Release ]
+    runs-on: [ self-hosted, "${{ matrix.platform }}" ]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: "recursive"
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '18'
+
+      - name: "Build Android using gradlew."
+        working-directory: android
+        run: ./gradlew app:assemble${{ matrix.build_type }}
+      - name: "Upload binaries to release"
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: "Build-${{github.run_number}}"
+          file: android/app/build/outputs/apk/**/*.apk
+          file_glob: true
+          overwrite: true
