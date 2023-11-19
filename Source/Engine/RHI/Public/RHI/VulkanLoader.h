@@ -1,0 +1,1038 @@
+﻿#pragma once
+#include "re-rhi_export.h"
+
+#define VK_ENABLE_BETA_EXTENSIONS
+
+// BlueVK dynamically loads all function pointers, so it cannot allow function prototypes, which
+// would assume static linking for Vulkan entry points.
+#if defined(VULKAN_H_) && !defined(VK_NO_PROTOTYPES)
+    #error Please do not include vulkan.h when using BlueVK
+#endif
+
+// Even though we don't use function prototypes, we still need to include vulkan.h for all Vulkan
+// types, including the PFN_ types.
+#ifndef VULKAN_H_
+    #ifndef VK_NO_PROTOTYPES
+        #define VK_NO_PROTOTYPES
+    #endif
+
+    #if defined(__ANDROID__)
+        #define VK_USE_PLATFORM_ANDROID_KHR 1
+    #elif defined(IOS)
+        #define VK_USE_PLATFORM_IOS_MVK 1
+    #elif defined(__linux__)
+        #if defined(FILAMENT_SUPPORTS_XCB)
+            #define VK_USE_PLATFORM_XCB_KHR 1
+        #endif
+        #if defined(FILAMENT_SUPPORTS_XLIB)
+            #define VK_USE_PLATFORM_XLIB_KHR 1
+        #endif
+        #if defined(FILAMENT_SUPPORTS_WAYLAND)
+            #define VK_USE_PLATFORM_WAYLAND_KHR 1
+        #endif
+    #elif defined(__APPLE__)
+        #define VK_USE_PLATFORM_MACOS_MVK 1
+    #elif defined(WIN32)
+        #define VK_USE_PLATFORM_WIN32_KHR 1
+    #endif
+
+    #include <vulkan/vulkan.h>
+#endif
+
+#include "Core/unwindows.h"
+
+namespace RE {
+
+RE_RHI_EXPORT bool InitializeVulkanLoader();
+
+RE_RHI_EXPORT void BindVkInstance(VkInstance instance);
+
+#if defined(VK_VERSION_1_0)
+RE_RHI_EXPORT extern PFN_vkAllocateCommandBuffers vkAllocateCommandBuffers;
+RE_RHI_EXPORT extern PFN_vkAllocateDescriptorSets vkAllocateDescriptorSets;
+RE_RHI_EXPORT extern PFN_vkAllocateMemory vkAllocateMemory;
+RE_RHI_EXPORT extern PFN_vkBeginCommandBuffer vkBeginCommandBuffer;
+RE_RHI_EXPORT extern PFN_vkBindBufferMemory vkBindBufferMemory;
+RE_RHI_EXPORT extern PFN_vkBindImageMemory vkBindImageMemory;
+RE_RHI_EXPORT extern PFN_vkCmdBeginQuery vkCmdBeginQuery;
+RE_RHI_EXPORT extern PFN_vkCmdBeginRenderPass vkCmdBeginRenderPass;
+RE_RHI_EXPORT extern PFN_vkCmdBindDescriptorSets vkCmdBindDescriptorSets;
+RE_RHI_EXPORT extern PFN_vkCmdBindIndexBuffer vkCmdBindIndexBuffer;
+RE_RHI_EXPORT extern PFN_vkCmdBindPipeline vkCmdBindPipeline;
+RE_RHI_EXPORT extern PFN_vkCmdBindVertexBuffers vkCmdBindVertexBuffers;
+RE_RHI_EXPORT extern PFN_vkCmdBlitImage vkCmdBlitImage;
+RE_RHI_EXPORT extern PFN_vkCmdClearAttachments vkCmdClearAttachments;
+RE_RHI_EXPORT extern PFN_vkCmdClearColorImage vkCmdClearColorImage;
+RE_RHI_EXPORT extern PFN_vkCmdClearDepthStencilImage vkCmdClearDepthStencilImage;
+RE_RHI_EXPORT extern PFN_vkCmdCopyBuffer vkCmdCopyBuffer;
+RE_RHI_EXPORT extern PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage;
+RE_RHI_EXPORT extern PFN_vkCmdCopyImage vkCmdCopyImage;
+RE_RHI_EXPORT extern PFN_vkCmdCopyImageToBuffer vkCmdCopyImageToBuffer;
+RE_RHI_EXPORT extern PFN_vkCmdCopyQueryPoolResults vkCmdCopyQueryPoolResults;
+RE_RHI_EXPORT extern PFN_vkCmdDispatch vkCmdDispatch;
+RE_RHI_EXPORT extern PFN_vkCmdDispatchIndirect vkCmdDispatchIndirect;
+RE_RHI_EXPORT extern PFN_vkCmdDraw vkCmdDraw;
+RE_RHI_EXPORT extern PFN_vkCmdDrawIndexed vkCmdDrawIndexed;
+RE_RHI_EXPORT extern PFN_vkCmdDrawIndexedIndirect vkCmdDrawIndexedIndirect;
+RE_RHI_EXPORT extern PFN_vkCmdDrawIndirect vkCmdDrawIndirect;
+RE_RHI_EXPORT extern PFN_vkCmdEndQuery vkCmdEndQuery;
+RE_RHI_EXPORT extern PFN_vkCmdEndRenderPass vkCmdEndRenderPass;
+RE_RHI_EXPORT extern PFN_vkCmdExecuteCommands vkCmdExecuteCommands;
+RE_RHI_EXPORT extern PFN_vkCmdFillBuffer vkCmdFillBuffer;
+RE_RHI_EXPORT extern PFN_vkCmdNextSubpass vkCmdNextSubpass;
+RE_RHI_EXPORT extern PFN_vkCmdPipelineBarrier vkCmdPipelineBarrier;
+RE_RHI_EXPORT extern PFN_vkCmdPushConstants vkCmdPushConstants;
+RE_RHI_EXPORT extern PFN_vkCmdResetEvent vkCmdResetEvent;
+RE_RHI_EXPORT extern PFN_vkCmdResetQueryPool vkCmdResetQueryPool;
+RE_RHI_EXPORT extern PFN_vkCmdResolveImage vkCmdResolveImage;
+RE_RHI_EXPORT extern PFN_vkCmdSetBlendConstants vkCmdSetBlendConstants;
+RE_RHI_EXPORT extern PFN_vkCmdSetDepthBias vkCmdSetDepthBias;
+RE_RHI_EXPORT extern PFN_vkCmdSetDepthBounds vkCmdSetDepthBounds;
+RE_RHI_EXPORT extern PFN_vkCmdSetEvent vkCmdSetEvent;
+RE_RHI_EXPORT extern PFN_vkCmdSetLineWidth vkCmdSetLineWidth;
+RE_RHI_EXPORT extern PFN_vkCmdSetScissor vkCmdSetScissor;
+RE_RHI_EXPORT extern PFN_vkCmdSetStencilCompareMask vkCmdSetStencilCompareMask;
+RE_RHI_EXPORT extern PFN_vkCmdSetStencilReference vkCmdSetStencilReference;
+RE_RHI_EXPORT extern PFN_vkCmdSetStencilWriteMask vkCmdSetStencilWriteMask;
+RE_RHI_EXPORT extern PFN_vkCmdSetViewport vkCmdSetViewport;
+RE_RHI_EXPORT extern PFN_vkCmdUpdateBuffer vkCmdUpdateBuffer;
+RE_RHI_EXPORT extern PFN_vkCmdWaitEvents vkCmdWaitEvents;
+RE_RHI_EXPORT extern PFN_vkCmdWriteTimestamp vkCmdWriteTimestamp;
+RE_RHI_EXPORT extern PFN_vkCreateBuffer vkCreateBuffer;
+RE_RHI_EXPORT extern PFN_vkCreateBufferView vkCreateBufferView;
+RE_RHI_EXPORT extern PFN_vkCreateCommandPool vkCreateCommandPool;
+RE_RHI_EXPORT extern PFN_vkCreateComputePipelines vkCreateComputePipelines;
+RE_RHI_EXPORT extern PFN_vkCreateDescriptorPool vkCreateDescriptorPool;
+RE_RHI_EXPORT extern PFN_vkCreateDescriptorSetLayout vkCreateDescriptorSetLayout;
+RE_RHI_EXPORT extern PFN_vkCreateDevice vkCreateDevice;
+RE_RHI_EXPORT extern PFN_vkCreateEvent vkCreateEvent;
+RE_RHI_EXPORT extern PFN_vkCreateFence vkCreateFence;
+RE_RHI_EXPORT extern PFN_vkCreateFramebuffer vkCreateFramebuffer;
+RE_RHI_EXPORT extern PFN_vkCreateGraphicsPipelines vkCreateGraphicsPipelines;
+RE_RHI_EXPORT extern PFN_vkCreateImage vkCreateImage;
+RE_RHI_EXPORT extern PFN_vkCreateImageView vkCreateImageView;
+RE_RHI_EXPORT extern PFN_vkCreateInstance vkCreateInstance;
+RE_RHI_EXPORT extern PFN_vkCreatePipelineCache vkCreatePipelineCache;
+RE_RHI_EXPORT extern PFN_vkCreatePipelineLayout vkCreatePipelineLayout;
+RE_RHI_EXPORT extern PFN_vkCreateQueryPool vkCreateQueryPool;
+RE_RHI_EXPORT extern PFN_vkCreateRenderPass vkCreateRenderPass;
+RE_RHI_EXPORT extern PFN_vkCreateSampler vkCreateSampler;
+RE_RHI_EXPORT extern PFN_vkCreateSemaphore vkCreateSemaphore;
+RE_RHI_EXPORT extern PFN_vkCreateShaderModule vkCreateShaderModule;
+RE_RHI_EXPORT extern PFN_vkDestroyBuffer vkDestroyBuffer;
+RE_RHI_EXPORT extern PFN_vkDestroyBufferView vkDestroyBufferView;
+RE_RHI_EXPORT extern PFN_vkDestroyCommandPool vkDestroyCommandPool;
+RE_RHI_EXPORT extern PFN_vkDestroyDescriptorPool vkDestroyDescriptorPool;
+RE_RHI_EXPORT extern PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout;
+RE_RHI_EXPORT extern PFN_vkDestroyDevice vkDestroyDevice;
+RE_RHI_EXPORT extern PFN_vkDestroyEvent vkDestroyEvent;
+RE_RHI_EXPORT extern PFN_vkDestroyFence vkDestroyFence;
+RE_RHI_EXPORT extern PFN_vkDestroyFramebuffer vkDestroyFramebuffer;
+RE_RHI_EXPORT extern PFN_vkDestroyImage vkDestroyImage;
+RE_RHI_EXPORT extern PFN_vkDestroyImageView vkDestroyImageView;
+RE_RHI_EXPORT extern PFN_vkDestroyInstance vkDestroyInstance;
+RE_RHI_EXPORT extern PFN_vkDestroyPipeline vkDestroyPipeline;
+RE_RHI_EXPORT extern PFN_vkDestroyPipelineCache vkDestroyPipelineCache;
+RE_RHI_EXPORT extern PFN_vkDestroyPipelineLayout vkDestroyPipelineLayout;
+RE_RHI_EXPORT extern PFN_vkDestroyQueryPool vkDestroyQueryPool;
+RE_RHI_EXPORT extern PFN_vkDestroyRenderPass vkDestroyRenderPass;
+RE_RHI_EXPORT extern PFN_vkDestroySampler vkDestroySampler;
+RE_RHI_EXPORT extern PFN_vkDestroySemaphore vkDestroySemaphore;
+RE_RHI_EXPORT extern PFN_vkDestroyShaderModule vkDestroyShaderModule;
+RE_RHI_EXPORT extern PFN_vkDeviceWaitIdle vkDeviceWaitIdle;
+RE_RHI_EXPORT extern PFN_vkEndCommandBuffer vkEndCommandBuffer;
+RE_RHI_EXPORT extern PFN_vkEnumerateDeviceExtensionProperties
+    vkEnumerateDeviceExtensionProperties;
+RE_RHI_EXPORT extern PFN_vkEnumerateDeviceLayerProperties
+    vkEnumerateDeviceLayerProperties;
+RE_RHI_EXPORT extern PFN_vkEnumerateInstanceExtensionProperties
+    vkEnumerateInstanceExtensionProperties;
+RE_RHI_EXPORT extern PFN_vkEnumerateInstanceLayerProperties
+    vkEnumerateInstanceLayerProperties;
+RE_RHI_EXPORT extern PFN_vkEnumeratePhysicalDevices vkEnumeratePhysicalDevices;
+RE_RHI_EXPORT extern PFN_vkFlushMappedMemoryRanges vkFlushMappedMemoryRanges;
+RE_RHI_EXPORT extern PFN_vkFreeCommandBuffers vkFreeCommandBuffers;
+RE_RHI_EXPORT extern PFN_vkFreeDescriptorSets vkFreeDescriptorSets;
+RE_RHI_EXPORT extern PFN_vkFreeMemory vkFreeMemory;
+RE_RHI_EXPORT extern PFN_vkGetBufferMemoryRequirements vkGetBufferMemoryRequirements;
+RE_RHI_EXPORT extern PFN_vkGetDeviceMemoryCommitment vkGetDeviceMemoryCommitment;
+RE_RHI_EXPORT extern PFN_vkGetDeviceProcAddr vkGetDeviceProcAddr;
+RE_RHI_EXPORT extern PFN_vkGetDeviceQueue vkGetDeviceQueue;
+RE_RHI_EXPORT extern PFN_vkGetEventStatus vkGetEventStatus;
+RE_RHI_EXPORT extern PFN_vkGetFenceStatus vkGetFenceStatus;
+RE_RHI_EXPORT extern PFN_vkGetImageMemoryRequirements vkGetImageMemoryRequirements;
+RE_RHI_EXPORT extern PFN_vkGetImageSparseMemoryRequirements
+    vkGetImageSparseMemoryRequirements;
+RE_RHI_EXPORT extern PFN_vkGetImageSubresourceLayout vkGetImageSubresourceLayout;
+RE_RHI_EXPORT extern PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceFeatures vkGetPhysicalDeviceFeatures;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceFormatProperties
+    vkGetPhysicalDeviceFormatProperties;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceImageFormatProperties
+    vkGetPhysicalDeviceImageFormatProperties;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceMemoryProperties
+    vkGetPhysicalDeviceMemoryProperties;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceProperties vkGetPhysicalDeviceProperties;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceQueueFamilyProperties
+    vkGetPhysicalDeviceQueueFamilyProperties;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceSparseImageFormatProperties
+    vkGetPhysicalDeviceSparseImageFormatProperties;
+RE_RHI_EXPORT extern PFN_vkGetPipelineCacheData vkGetPipelineCacheData;
+RE_RHI_EXPORT extern PFN_vkGetQueryPoolResults vkGetQueryPoolResults;
+RE_RHI_EXPORT extern PFN_vkGetRenderAreaGranularity vkGetRenderAreaGranularity;
+RE_RHI_EXPORT extern PFN_vkInvalidateMappedMemoryRanges vkInvalidateMappedMemoryRanges;
+RE_RHI_EXPORT extern PFN_vkMapMemory vkMapMemory;
+RE_RHI_EXPORT extern PFN_vkMergePipelineCaches vkMergePipelineCaches;
+RE_RHI_EXPORT extern PFN_vkQueueBindSparse vkQueueBindSparse;
+RE_RHI_EXPORT extern PFN_vkQueueSubmit vkQueueSubmit;
+RE_RHI_EXPORT extern PFN_vkQueueWaitIdle vkQueueWaitIdle;
+RE_RHI_EXPORT extern PFN_vkResetCommandBuffer vkResetCommandBuffer;
+RE_RHI_EXPORT extern PFN_vkResetCommandPool vkResetCommandPool;
+RE_RHI_EXPORT extern PFN_vkResetDescriptorPool vkResetDescriptorPool;
+RE_RHI_EXPORT extern PFN_vkResetEvent vkResetEvent;
+RE_RHI_EXPORT extern PFN_vkResetFences vkResetFences;
+RE_RHI_EXPORT extern PFN_vkSetEvent vkSetEvent;
+RE_RHI_EXPORT extern PFN_vkUnmapMemory vkUnmapMemory;
+RE_RHI_EXPORT extern PFN_vkUpdateDescriptorSets vkUpdateDescriptorSets;
+RE_RHI_EXPORT extern PFN_vkWaitForFences vkWaitForFences;
+#endif // defined(VK_VERSION_1_0)
+#if defined(VK_VERSION_1_1)
+RE_RHI_EXPORT extern PFN_vkBindBufferMemory2 vkBindBufferMemory2;
+RE_RHI_EXPORT extern PFN_vkBindImageMemory2 vkBindImageMemory2;
+RE_RHI_EXPORT extern PFN_vkCmdDispatchBase vkCmdDispatchBase;
+RE_RHI_EXPORT extern PFN_vkCmdSetDeviceMask vkCmdSetDeviceMask;
+RE_RHI_EXPORT extern PFN_vkCreateDescriptorUpdateTemplate
+    vkCreateDescriptorUpdateTemplate;
+RE_RHI_EXPORT extern PFN_vkCreateSamplerYcbcrConversion vkCreateSamplerYcbcrConversion;
+RE_RHI_EXPORT extern PFN_vkDestroyDescriptorUpdateTemplate
+    vkDestroyDescriptorUpdateTemplate;
+RE_RHI_EXPORT extern PFN_vkDestroySamplerYcbcrConversion vkDestroySamplerYcbcrConversion;
+RE_RHI_EXPORT extern PFN_vkEnumerateInstanceVersion vkEnumerateInstanceVersion;
+RE_RHI_EXPORT extern PFN_vkEnumeratePhysicalDeviceGroups vkEnumeratePhysicalDeviceGroups;
+RE_RHI_EXPORT extern PFN_vkGetBufferMemoryRequirements2 vkGetBufferMemoryRequirements2;
+RE_RHI_EXPORT extern PFN_vkGetDescriptorSetLayoutSupport vkGetDescriptorSetLayoutSupport;
+RE_RHI_EXPORT extern PFN_vkGetDeviceGroupPeerMemoryFeatures
+    vkGetDeviceGroupPeerMemoryFeatures;
+RE_RHI_EXPORT extern PFN_vkGetDeviceQueue2 vkGetDeviceQueue2;
+RE_RHI_EXPORT extern PFN_vkGetImageMemoryRequirements2 vkGetImageMemoryRequirements2;
+RE_RHI_EXPORT extern PFN_vkGetImageSparseMemoryRequirements2
+    vkGetImageSparseMemoryRequirements2;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceExternalBufferProperties
+    vkGetPhysicalDeviceExternalBufferProperties;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceExternalFenceProperties
+    vkGetPhysicalDeviceExternalFenceProperties;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceExternalSemaphoreProperties
+    vkGetPhysicalDeviceExternalSemaphoreProperties;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceFeatures2 vkGetPhysicalDeviceFeatures2;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceFormatProperties2
+    vkGetPhysicalDeviceFormatProperties2;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceImageFormatProperties2
+    vkGetPhysicalDeviceImageFormatProperties2;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceMemoryProperties2
+    vkGetPhysicalDeviceMemoryProperties2;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceProperties2 vkGetPhysicalDeviceProperties2;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceQueueFamilyProperties2
+    vkGetPhysicalDeviceQueueFamilyProperties2;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceSparseImageFormatProperties2
+    vkGetPhysicalDeviceSparseImageFormatProperties2;
+RE_RHI_EXPORT extern PFN_vkTrimCommandPool vkTrimCommandPool;
+RE_RHI_EXPORT extern PFN_vkUpdateDescriptorSetWithTemplate
+    vkUpdateDescriptorSetWithTemplate;
+#endif // defined(VK_VERSION_1_1)
+#if defined(VK_VERSION_1_2)
+RE_RHI_EXPORT extern PFN_vkCmdBeginRenderPass2 vkCmdBeginRenderPass2;
+RE_RHI_EXPORT extern PFN_vkCmdDrawIndexedIndirectCount vkCmdDrawIndexedIndirectCount;
+RE_RHI_EXPORT extern PFN_vkCmdDrawIndirectCount vkCmdDrawIndirectCount;
+RE_RHI_EXPORT extern PFN_vkCmdEndRenderPass2 vkCmdEndRenderPass2;
+RE_RHI_EXPORT extern PFN_vkCmdNextSubpass2 vkCmdNextSubpass2;
+RE_RHI_EXPORT extern PFN_vkCreateRenderPass2 vkCreateRenderPass2;
+RE_RHI_EXPORT extern PFN_vkGetBufferDeviceAddress vkGetBufferDeviceAddress;
+RE_RHI_EXPORT extern PFN_vkGetBufferOpaqueCaptureAddress vkGetBufferOpaqueCaptureAddress;
+RE_RHI_EXPORT extern PFN_vkGetDeviceMemoryOpaqueCaptureAddress
+    vkGetDeviceMemoryOpaqueCaptureAddress;
+RE_RHI_EXPORT extern PFN_vkGetSemaphoreCounterValue vkGetSemaphoreCounterValue;
+RE_RHI_EXPORT extern PFN_vkResetQueryPool vkResetQueryPool;
+RE_RHI_EXPORT extern PFN_vkSignalSemaphore vkSignalSemaphore;
+RE_RHI_EXPORT extern PFN_vkWaitSemaphores vkWaitSemaphores;
+#endif // defined(VK_VERSION_1_2)
+#if defined(VK_VERSION_1_3)
+RE_RHI_EXPORT extern PFN_vkCmdBeginRendering vkCmdBeginRendering;
+RE_RHI_EXPORT extern PFN_vkCmdBindVertexBuffers2 vkCmdBindVertexBuffers2;
+RE_RHI_EXPORT extern PFN_vkCmdBlitImage2 vkCmdBlitImage2;
+RE_RHI_EXPORT extern PFN_vkCmdCopyBuffer2 vkCmdCopyBuffer2;
+RE_RHI_EXPORT extern PFN_vkCmdCopyBufferToImage2 vkCmdCopyBufferToImage2;
+RE_RHI_EXPORT extern PFN_vkCmdCopyImage2 vkCmdCopyImage2;
+RE_RHI_EXPORT extern PFN_vkCmdCopyImageToBuffer2 vkCmdCopyImageToBuffer2;
+RE_RHI_EXPORT extern PFN_vkCmdEndRendering vkCmdEndRendering;
+RE_RHI_EXPORT extern PFN_vkCmdPipelineBarrier2 vkCmdPipelineBarrier2;
+RE_RHI_EXPORT extern PFN_vkCmdResetEvent2 vkCmdResetEvent2;
+RE_RHI_EXPORT extern PFN_vkCmdResolveImage2 vkCmdResolveImage2;
+RE_RHI_EXPORT extern PFN_vkCmdSetCullMode vkCmdSetCullMode;
+RE_RHI_EXPORT extern PFN_vkCmdSetDepthBiasEnable vkCmdSetDepthBiasEnable;
+RE_RHI_EXPORT extern PFN_vkCmdSetDepthBoundsTestEnable vkCmdSetDepthBoundsTestEnable;
+RE_RHI_EXPORT extern PFN_vkCmdSetDepthCompareOp vkCmdSetDepthCompareOp;
+RE_RHI_EXPORT extern PFN_vkCmdSetDepthTestEnable vkCmdSetDepthTestEnable;
+RE_RHI_EXPORT extern PFN_vkCmdSetDepthWriteEnable vkCmdSetDepthWriteEnable;
+RE_RHI_EXPORT extern PFN_vkCmdSetEvent2 vkCmdSetEvent2;
+RE_RHI_EXPORT extern PFN_vkCmdSetFrontFace vkCmdSetFrontFace;
+RE_RHI_EXPORT extern PFN_vkCmdSetPrimitiveRestartEnable vkCmdSetPrimitiveRestartEnable;
+RE_RHI_EXPORT extern PFN_vkCmdSetPrimitiveTopology vkCmdSetPrimitiveTopology;
+RE_RHI_EXPORT extern PFN_vkCmdSetRasterizerDiscardEnable vkCmdSetRasterizerDiscardEnable;
+RE_RHI_EXPORT extern PFN_vkCmdSetScissorWithCount vkCmdSetScissorWithCount;
+RE_RHI_EXPORT extern PFN_vkCmdSetStencilOp vkCmdSetStencilOp;
+RE_RHI_EXPORT extern PFN_vkCmdSetStencilTestEnable vkCmdSetStencilTestEnable;
+RE_RHI_EXPORT extern PFN_vkCmdSetViewportWithCount vkCmdSetViewportWithCount;
+RE_RHI_EXPORT extern PFN_vkCmdWaitEvents2 vkCmdWaitEvents2;
+RE_RHI_EXPORT extern PFN_vkCmdWriteTimestamp2 vkCmdWriteTimestamp2;
+RE_RHI_EXPORT extern PFN_vkCreatePrivateDataSlot vkCreatePrivateDataSlot;
+RE_RHI_EXPORT extern PFN_vkDestroyPrivateDataSlot vkDestroyPrivateDataSlot;
+RE_RHI_EXPORT extern PFN_vkGetDeviceBufferMemoryRequirements
+    vkGetDeviceBufferMemoryRequirements;
+RE_RHI_EXPORT extern PFN_vkGetDeviceImageMemoryRequirements
+    vkGetDeviceImageMemoryRequirements;
+RE_RHI_EXPORT extern PFN_vkGetDeviceImageSparseMemoryRequirements
+    vkGetDeviceImageSparseMemoryRequirements;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceToolProperties
+    vkGetPhysicalDeviceToolProperties;
+RE_RHI_EXPORT extern PFN_vkGetPrivateData vkGetPrivateData;
+RE_RHI_EXPORT extern PFN_vkQueueSubmit2 vkQueueSubmit2;
+RE_RHI_EXPORT extern PFN_vkSetPrivateData vkSetPrivateData;
+#endif // defined(VK_VERSION_1_3)
+#if defined(VK_AMD_buffer_marker)
+RE_RHI_EXPORT extern PFN_vkCmdWriteBufferMarkerAMD vkCmdWriteBufferMarkerAMD;
+#endif // defined(VK_AMD_buffer_marker)
+#if defined(VK_AMD_display_native_hdr)
+RE_RHI_EXPORT extern PFN_vkSetLocalDimmingAMD vkSetLocalDimmingAMD;
+#endif // defined(VK_AMD_display_native_hdr)
+#if defined(VK_AMD_draw_indirect_count)
+RE_RHI_EXPORT extern PFN_vkCmdDrawIndexedIndirectCountAMD
+    vkCmdDrawIndexedIndirectCountAMD;
+RE_RHI_EXPORT extern PFN_vkCmdDrawIndirectCountAMD vkCmdDrawIndirectCountAMD;
+#endif // defined(VK_AMD_draw_indirect_count)
+#if defined(VK_AMD_shader_info)
+RE_RHI_EXPORT extern PFN_vkGetShaderInfoAMD vkGetShaderInfoAMD;
+#endif // defined(VK_AMD_shader_info)
+#if defined(VK_ANDROID_external_memory_android_hardware_buffer)
+RE_RHI_EXPORT extern PFN_vkGetAndroidHardwareBufferPropertiesANDROID
+    vkGetAndroidHardwareBufferPropertiesANDROID;
+RE_RHI_EXPORT extern PFN_vkGetMemoryAndroidHardwareBufferANDROID
+    vkGetMemoryAndroidHardwareBufferANDROID;
+#endif // defined(VK_ANDROID_external_memory_android_hardware_buffer)
+#if defined(VK_ANDROID_native_buffer)
+RE_RHI_EXPORT extern PFN_vkAcquireImageANDROID vkAcquireImageANDROID;
+RE_RHI_EXPORT extern PFN_vkGetSwapchainGrallocUsage2ANDROID
+    vkGetSwapchainGrallocUsage2ANDROID;
+RE_RHI_EXPORT extern PFN_vkGetSwapchainGrallocUsageANDROID
+    vkGetSwapchainGrallocUsageANDROID;
+RE_RHI_EXPORT extern PFN_vkQueueSignalReleaseImageANDROID
+    vkQueueSignalReleaseImageANDROID;
+#endif // defined(VK_ANDROID_native_buffer)
+#if defined(VK_EXT_acquire_drm_display)
+RE_RHI_EXPORT extern PFN_vkAcquireDrmDisplayEXT vkAcquireDrmDisplayEXT;
+RE_RHI_EXPORT extern PFN_vkGetDrmDisplayEXT vkGetDrmDisplayEXT;
+#endif // defined(VK_EXT_acquire_drm_display)
+#if defined(VK_EXT_acquire_xlib_display)
+RE_RHI_EXPORT extern PFN_vkAcquireXlibDisplayEXT vkAcquireXlibDisplayEXT;
+RE_RHI_EXPORT extern PFN_vkGetRandROutputDisplayEXT vkGetRandROutputDisplayEXT;
+#endif // defined(VK_EXT_acquire_xlib_display)
+#if defined(VK_EXT_buffer_device_address)
+RE_RHI_EXPORT extern PFN_vkGetBufferDeviceAddressEXT vkGetBufferDeviceAddressEXT;
+#endif // defined(VK_EXT_buffer_device_address)
+#if defined(VK_EXT_calibrated_timestamps)
+RE_RHI_EXPORT extern PFN_vkGetCalibratedTimestampsEXT vkGetCalibratedTimestampsEXT;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT
+    vkGetPhysicalDeviceCalibrateableTimeDomainsEXT;
+#endif // defined(VK_EXT_calibrated_timestamps)
+#if defined(VK_EXT_color_write_enable)
+RE_RHI_EXPORT extern PFN_vkCmdSetColorWriteEnableEXT vkCmdSetColorWriteEnableEXT;
+#endif // defined(VK_EXT_color_write_enable)
+#if defined(VK_EXT_conditional_rendering)
+RE_RHI_EXPORT extern PFN_vkCmdBeginConditionalRenderingEXT
+    vkCmdBeginConditionalRenderingEXT;
+RE_RHI_EXPORT extern PFN_vkCmdEndConditionalRenderingEXT vkCmdEndConditionalRenderingEXT;
+#endif // defined(VK_EXT_conditional_rendering)
+#if defined(VK_EXT_debug_marker)
+RE_RHI_EXPORT extern PFN_vkCmdDebugMarkerBeginEXT vkCmdDebugMarkerBeginEXT;
+RE_RHI_EXPORT extern PFN_vkCmdDebugMarkerEndEXT vkCmdDebugMarkerEndEXT;
+RE_RHI_EXPORT extern PFN_vkCmdDebugMarkerInsertEXT vkCmdDebugMarkerInsertEXT;
+RE_RHI_EXPORT extern PFN_vkDebugMarkerSetObjectNameEXT vkDebugMarkerSetObjectNameEXT;
+RE_RHI_EXPORT extern PFN_vkDebugMarkerSetObjectTagEXT vkDebugMarkerSetObjectTagEXT;
+#endif // defined(VK_EXT_debug_marker)
+#if defined(VK_EXT_debug_report)
+RE_RHI_EXPORT extern PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
+RE_RHI_EXPORT extern PFN_vkDebugReportMessageEXT vkDebugReportMessageEXT;
+RE_RHI_EXPORT extern PFN_vkDestroyDebugReportCallbackEXT vkDestroyDebugReportCallbackEXT;
+#endif // defined(VK_EXT_debug_report)
+#if defined(VK_EXT_debug_utils)
+RE_RHI_EXPORT extern PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabelEXT;
+RE_RHI_EXPORT extern PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabelEXT;
+RE_RHI_EXPORT extern PFN_vkCmdInsertDebugUtilsLabelEXT vkCmdInsertDebugUtilsLabelEXT;
+RE_RHI_EXPORT extern PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT;
+RE_RHI_EXPORT extern PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessengerEXT;
+RE_RHI_EXPORT extern PFN_vkQueueBeginDebugUtilsLabelEXT vkQueueBeginDebugUtilsLabelEXT;
+RE_RHI_EXPORT extern PFN_vkQueueEndDebugUtilsLabelEXT vkQueueEndDebugUtilsLabelEXT;
+RE_RHI_EXPORT extern PFN_vkQueueInsertDebugUtilsLabelEXT vkQueueInsertDebugUtilsLabelEXT;
+RE_RHI_EXPORT extern PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT;
+RE_RHI_EXPORT extern PFN_vkSetDebugUtilsObjectTagEXT vkSetDebugUtilsObjectTagEXT;
+RE_RHI_EXPORT extern PFN_vkSubmitDebugUtilsMessageEXT vkSubmitDebugUtilsMessageEXT;
+#endif // defined(VK_EXT_debug_utils)
+#if defined(VK_EXT_direct_mode_display)
+RE_RHI_EXPORT extern PFN_vkReleaseDisplayEXT vkReleaseDisplayEXT;
+#endif // defined(VK_EXT_direct_mode_display)
+#if defined(VK_EXT_directfb_surface)
+RE_RHI_EXPORT extern PFN_vkCreateDirectFBSurfaceEXT vkCreateDirectFBSurfaceEXT;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceDirectFBPresentationSupportEXT
+    vkGetPhysicalDeviceDirectFBPresentationSupportEXT;
+#endif // defined(VK_EXT_directfb_surface)
+#if defined(VK_EXT_discard_rectangles)
+RE_RHI_EXPORT extern PFN_vkCmdSetDiscardRectangleEXT vkCmdSetDiscardRectangleEXT;
+#endif // defined(VK_EXT_discard_rectangles)
+#if defined(VK_EXT_display_control)
+RE_RHI_EXPORT extern PFN_vkDisplayPowerControlEXT vkDisplayPowerControlEXT;
+RE_RHI_EXPORT extern PFN_vkGetSwapchainCounterEXT vkGetSwapchainCounterEXT;
+RE_RHI_EXPORT extern PFN_vkRegisterDeviceEventEXT vkRegisterDeviceEventEXT;
+RE_RHI_EXPORT extern PFN_vkRegisterDisplayEventEXT vkRegisterDisplayEventEXT;
+#endif // defined(VK_EXT_display_control)
+#if defined(VK_EXT_display_surface_counter)
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT
+    vkGetPhysicalDeviceSurfaceCapabilities2EXT;
+#endif // defined(VK_EXT_display_surface_counter)
+#if defined(VK_EXT_extended_dynamic_state)
+RE_RHI_EXPORT extern PFN_vkCmdBindVertexBuffers2EXT vkCmdBindVertexBuffers2EXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetCullModeEXT vkCmdSetCullModeEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetDepthBoundsTestEnableEXT
+    vkCmdSetDepthBoundsTestEnableEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetDepthCompareOpEXT vkCmdSetDepthCompareOpEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetDepthTestEnableEXT vkCmdSetDepthTestEnableEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetDepthWriteEnableEXT vkCmdSetDepthWriteEnableEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetFrontFaceEXT vkCmdSetFrontFaceEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetPrimitiveTopologyEXT vkCmdSetPrimitiveTopologyEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetScissorWithCountEXT vkCmdSetScissorWithCountEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetStencilOpEXT vkCmdSetStencilOpEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetStencilTestEnableEXT vkCmdSetStencilTestEnableEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetViewportWithCountEXT vkCmdSetViewportWithCountEXT;
+#endif // defined(VK_EXT_extended_dynamic_state)
+#if defined(VK_EXT_extended_dynamic_state2)
+RE_RHI_EXPORT extern PFN_vkCmdSetDepthBiasEnableEXT vkCmdSetDepthBiasEnableEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetLogicOpEXT vkCmdSetLogicOpEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetPatchControlPointsEXT vkCmdSetPatchControlPointsEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetPrimitiveRestartEnableEXT
+    vkCmdSetPrimitiveRestartEnableEXT;
+RE_RHI_EXPORT extern PFN_vkCmdSetRasterizerDiscardEnableEXT
+    vkCmdSetRasterizerDiscardEnableEXT;
+#endif // defined(VK_EXT_extended_dynamic_state2)
+#if defined(VK_EXT_external_memory_host)
+RE_RHI_EXPORT extern PFN_vkGetMemoryHostPointerPropertiesEXT
+    vkGetMemoryHostPointerPropertiesEXT;
+#endif // defined(VK_EXT_external_memory_host)
+#if defined(VK_EXT_full_screen_exclusive)
+RE_RHI_EXPORT extern PFN_vkAcquireFullScreenExclusiveModeEXT
+    vkAcquireFullScreenExclusiveModeEXT;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT
+    vkGetPhysicalDeviceSurfacePresentModes2EXT;
+RE_RHI_EXPORT extern PFN_vkReleaseFullScreenExclusiveModeEXT
+    vkReleaseFullScreenExclusiveModeEXT;
+#endif // defined(VK_EXT_full_screen_exclusive)
+#if defined(VK_EXT_hdr_metadata)
+RE_RHI_EXPORT extern PFN_vkSetHdrMetadataEXT vkSetHdrMetadataEXT;
+#endif // defined(VK_EXT_hdr_metadata)
+#if defined(VK_EXT_headless_surface)
+RE_RHI_EXPORT extern PFN_vkCreateHeadlessSurfaceEXT vkCreateHeadlessSurfaceEXT;
+#endif // defined(VK_EXT_headless_surface)
+#if defined(VK_EXT_host_query_reset)
+RE_RHI_EXPORT extern PFN_vkResetQueryPoolEXT vkResetQueryPoolEXT;
+#endif // defined(VK_EXT_host_query_reset)
+#if defined(VK_EXT_image_compression_control)
+RE_RHI_EXPORT extern PFN_vkGetImageSubresourceLayout2EXT vkGetImageSubresourceLayout2EXT;
+#endif // defined(VK_EXT_image_compression_control)
+#if defined(VK_EXT_image_drm_format_modifier)
+RE_RHI_EXPORT extern PFN_vkGetImageDrmFormatModifierPropertiesEXT
+    vkGetImageDrmFormatModifierPropertiesEXT;
+#endif // defined(VK_EXT_image_drm_format_modifier)
+#if defined(VK_EXT_line_rasterization)
+RE_RHI_EXPORT extern PFN_vkCmdSetLineStippleEXT vkCmdSetLineStippleEXT;
+#endif // defined(VK_EXT_line_rasterization)
+#if defined(VK_EXT_metal_objects)
+RE_RHI_EXPORT extern PFN_vkExportMetalObjectsEXT vkExportMetalObjectsEXT;
+#endif // defined(VK_EXT_metal_objects)
+#if defined(VK_EXT_metal_surface)
+RE_RHI_EXPORT extern PFN_vkCreateMetalSurfaceEXT vkCreateMetalSurfaceEXT;
+#endif // defined(VK_EXT_metal_surface)
+#if defined(VK_EXT_multi_draw)
+RE_RHI_EXPORT extern PFN_vkCmdDrawMultiEXT vkCmdDrawMultiEXT;
+RE_RHI_EXPORT extern PFN_vkCmdDrawMultiIndexedEXT vkCmdDrawMultiIndexedEXT;
+#endif // defined(VK_EXT_multi_draw)
+#if defined(VK_EXT_pageable_device_local_memory)
+RE_RHI_EXPORT extern PFN_vkSetDeviceMemoryPriorityEXT vkSetDeviceMemoryPriorityEXT;
+#endif // defined(VK_EXT_pageable_device_local_memory)
+#if defined(VK_EXT_pipeline_properties)
+RE_RHI_EXPORT extern PFN_vkGetPipelinePropertiesEXT vkGetPipelinePropertiesEXT;
+#endif // defined(VK_EXT_pipeline_properties)
+#if defined(VK_EXT_private_data)
+RE_RHI_EXPORT extern PFN_vkCreatePrivateDataSlotEXT vkCreatePrivateDataSlotEXT;
+RE_RHI_EXPORT extern PFN_vkDestroyPrivateDataSlotEXT vkDestroyPrivateDataSlotEXT;
+RE_RHI_EXPORT extern PFN_vkGetPrivateDataEXT vkGetPrivateDataEXT;
+RE_RHI_EXPORT extern PFN_vkSetPrivateDataEXT vkSetPrivateDataEXT;
+#endif // defined(VK_EXT_private_data)
+#if defined(VK_EXT_sample_locations)
+RE_RHI_EXPORT extern PFN_vkCmdSetSampleLocationsEXT vkCmdSetSampleLocationsEXT;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT
+    vkGetPhysicalDeviceMultisamplePropertiesEXT;
+#endif // defined(VK_EXT_sample_locations)
+#if defined(VK_EXT_tooling_info)
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceToolPropertiesEXT
+    vkGetPhysicalDeviceToolPropertiesEXT;
+#endif // defined(VK_EXT_tooling_info)
+#if defined(VK_EXT_transform_feedback)
+RE_RHI_EXPORT extern PFN_vkCmdBeginQueryIndexedEXT vkCmdBeginQueryIndexedEXT;
+RE_RHI_EXPORT extern PFN_vkCmdBeginTransformFeedbackEXT vkCmdBeginTransformFeedbackEXT;
+RE_RHI_EXPORT extern PFN_vkCmdBindTransformFeedbackBuffersEXT
+    vkCmdBindTransformFeedbackBuffersEXT;
+RE_RHI_EXPORT extern PFN_vkCmdDrawIndirectByteCountEXT vkCmdDrawIndirectByteCountEXT;
+RE_RHI_EXPORT extern PFN_vkCmdEndQueryIndexedEXT vkCmdEndQueryIndexedEXT;
+RE_RHI_EXPORT extern PFN_vkCmdEndTransformFeedbackEXT vkCmdEndTransformFeedbackEXT;
+#endif // defined(VK_EXT_transform_feedback)
+#if defined(VK_EXT_validation_cache)
+RE_RHI_EXPORT extern PFN_vkCreateValidationCacheEXT vkCreateValidationCacheEXT;
+RE_RHI_EXPORT extern PFN_vkDestroyValidationCacheEXT vkDestroyValidationCacheEXT;
+RE_RHI_EXPORT extern PFN_vkGetValidationCacheDataEXT vkGetValidationCacheDataEXT;
+RE_RHI_EXPORT extern PFN_vkMergeValidationCachesEXT vkMergeValidationCachesEXT;
+#endif // defined(VK_EXT_validation_cache)
+#if defined(VK_EXT_vertex_input_dynamic_state)
+RE_RHI_EXPORT extern PFN_vkCmdSetVertexInputEXT vkCmdSetVertexInputEXT;
+#endif // defined(VK_EXT_vertex_input_dynamic_state)
+#if defined(VK_FUCHSIA_buffer_collection)
+RE_RHI_EXPORT extern PFN_vkCreateBufferCollectionFUCHSIA vkCreateBufferCollectionFUCHSIA;
+RE_RHI_EXPORT extern PFN_vkDestroyBufferCollectionFUCHSIA
+    vkDestroyBufferCollectionFUCHSIA;
+RE_RHI_EXPORT extern PFN_vkGetBufferCollectionPropertiesFUCHSIA
+    vkGetBufferCollectionPropertiesFUCHSIA;
+RE_RHI_EXPORT extern PFN_vkSetBufferCollectionBufferConstraintsFUCHSIA
+    vkSetBufferCollectionBufferConstraintsFUCHSIA;
+RE_RHI_EXPORT extern PFN_vkSetBufferCollectionImageConstraintsFUCHSIA
+    vkSetBufferCollectionImageConstraintsFUCHSIA;
+#endif // defined(VK_FUCHSIA_buffer_collection)
+#if defined(VK_FUCHSIA_external_memory)
+RE_RHI_EXPORT extern PFN_vkGetMemoryZirconHandleFUCHSIA vkGetMemoryZirconHandleFUCHSIA;
+RE_RHI_EXPORT extern PFN_vkGetMemoryZirconHandlePropertiesFUCHSIA
+    vkGetMemoryZirconHandlePropertiesFUCHSIA;
+#endif // defined(VK_FUCHSIA_external_memory)
+#if defined(VK_FUCHSIA_external_semaphore)
+RE_RHI_EXPORT extern PFN_vkGetSemaphoreZirconHandleFUCHSIA
+    vkGetSemaphoreZirconHandleFUCHSIA;
+RE_RHI_EXPORT extern PFN_vkImportSemaphoreZirconHandleFUCHSIA
+    vkImportSemaphoreZirconHandleFUCHSIA;
+#endif // defined(VK_FUCHSIA_external_semaphore)
+#if defined(VK_FUCHSIA_imagepipe_surface)
+RE_RHI_EXPORT extern PFN_vkCreateImagePipeSurfaceFUCHSIA vkCreateImagePipeSurfaceFUCHSIA;
+#endif // defined(VK_FUCHSIA_imagepipe_surface)
+#if defined(VK_GGP_stream_descriptor_surface)
+RE_RHI_EXPORT extern PFN_vkCreateStreamDescriptorSurfaceGGP
+    vkCreateStreamDescriptorSurfaceGGP;
+#endif // defined(VK_GGP_stream_descriptor_surface)
+#if defined(VK_GOOGLE_display_timing)
+RE_RHI_EXPORT extern PFN_vkGetPastPresentationTimingGOOGLE
+    vkGetPastPresentationTimingGOOGLE;
+RE_RHI_EXPORT extern PFN_vkGetRefreshCycleDurationGOOGLE vkGetRefreshCycleDurationGOOGLE;
+#endif // defined(VK_GOOGLE_display_timing)
+#if defined(VK_HUAWEI_invocation_mask)
+RE_RHI_EXPORT extern PFN_vkCmdBindInvocationMaskHUAWEI vkCmdBindInvocationMaskHUAWEI;
+#endif // defined(VK_HUAWEI_invocation_mask)
+#if defined(VK_HUAWEI_subpass_shading)
+RE_RHI_EXPORT extern PFN_vkCmdSubpassShadingHUAWEI vkCmdSubpassShadingHUAWEI;
+RE_RHI_EXPORT extern PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI
+    vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI;
+#endif // defined(VK_HUAWEI_subpass_shading)
+#if defined(VK_INTEL_performance_query)
+RE_RHI_EXPORT extern PFN_vkAcquirePerformanceConfigurationINTEL
+    vkAcquirePerformanceConfigurationINTEL;
+RE_RHI_EXPORT extern PFN_vkCmdSetPerformanceMarkerINTEL vkCmdSetPerformanceMarkerINTEL;
+RE_RHI_EXPORT extern PFN_vkCmdSetPerformanceOverrideINTEL
+    vkCmdSetPerformanceOverrideINTEL;
+RE_RHI_EXPORT extern PFN_vkCmdSetPerformanceStreamMarkerINTEL
+    vkCmdSetPerformanceStreamMarkerINTEL;
+RE_RHI_EXPORT extern PFN_vkGetPerformanceParameterINTEL vkGetPerformanceParameterINTEL;
+RE_RHI_EXPORT extern PFN_vkInitializePerformanceApiINTEL vkInitializePerformanceApiINTEL;
+RE_RHI_EXPORT extern PFN_vkQueueSetPerformanceConfigurationINTEL
+    vkQueueSetPerformanceConfigurationINTEL;
+RE_RHI_EXPORT extern PFN_vkReleasePerformanceConfigurationINTEL
+    vkReleasePerformanceConfigurationINTEL;
+RE_RHI_EXPORT extern PFN_vkUninitializePerformanceApiINTEL
+    vkUninitializePerformanceApiINTEL;
+#endif // defined(VK_INTEL_performance_query)
+#if defined(VK_KHR_acceleration_structure)
+RE_RHI_EXPORT extern PFN_vkBuildAccelerationStructuresKHR
+    vkBuildAccelerationStructuresKHR;
+RE_RHI_EXPORT extern PFN_vkCmdBuildAccelerationStructuresIndirectKHR
+    vkCmdBuildAccelerationStructuresIndirectKHR;
+RE_RHI_EXPORT extern PFN_vkCmdBuildAccelerationStructuresKHR
+    vkCmdBuildAccelerationStructuresKHR;
+RE_RHI_EXPORT extern PFN_vkCmdCopyAccelerationStructureKHR
+    vkCmdCopyAccelerationStructureKHR;
+RE_RHI_EXPORT extern PFN_vkCmdCopyAccelerationStructureToMemoryKHR
+    vkCmdCopyAccelerationStructureToMemoryKHR;
+RE_RHI_EXPORT extern PFN_vkCmdCopyMemoryToAccelerationStructureKHR
+    vkCmdCopyMemoryToAccelerationStructureKHR;
+RE_RHI_EXPORT extern PFN_vkCmdWriteAccelerationStructuresPropertiesKHR
+    vkCmdWriteAccelerationStructuresPropertiesKHR;
+RE_RHI_EXPORT extern PFN_vkCopyAccelerationStructureKHR vkCopyAccelerationStructureKHR;
+RE_RHI_EXPORT extern PFN_vkCopyAccelerationStructureToMemoryKHR
+    vkCopyAccelerationStructureToMemoryKHR;
+RE_RHI_EXPORT extern PFN_vkCopyMemoryToAccelerationStructureKHR
+    vkCopyMemoryToAccelerationStructureKHR;
+RE_RHI_EXPORT extern PFN_vkCreateAccelerationStructureKHR
+    vkCreateAccelerationStructureKHR;
+RE_RHI_EXPORT extern PFN_vkDestroyAccelerationStructureKHR
+    vkDestroyAccelerationStructureKHR;
+RE_RHI_EXPORT extern PFN_vkGetAccelerationStructureBuildSizesKHR
+    vkGetAccelerationStructureBuildSizesKHR;
+RE_RHI_EXPORT extern PFN_vkGetAccelerationStructureDeviceAddressKHR
+    vkGetAccelerationStructureDeviceAddressKHR;
+RE_RHI_EXPORT extern PFN_vkGetDeviceAccelerationStructureCompatibilityKHR
+    vkGetDeviceAccelerationStructureCompatibilityKHR;
+RE_RHI_EXPORT extern PFN_vkWriteAccelerationStructuresPropertiesKHR
+    vkWriteAccelerationStructuresPropertiesKHR;
+#endif // defined(VK_KHR_acceleration_structure)
+#if defined(VK_KHR_android_surface)
+RE_RHI_EXPORT extern PFN_vkCreateAndroidSurfaceKHR vkCreateAndroidSurfaceKHR;
+#endif // defined(VK_KHR_android_surface)
+#if defined(VK_KHR_bind_memory2)
+RE_RHI_EXPORT extern PFN_vkBindBufferMemory2KHR vkBindBufferMemory2KHR;
+RE_RHI_EXPORT extern PFN_vkBindImageMemory2KHR vkBindImageMemory2KHR;
+#endif // defined(VK_KHR_bind_memory2)
+#if defined(VK_KHR_buffer_device_address)
+RE_RHI_EXPORT extern PFN_vkGetBufferDeviceAddressKHR vkGetBufferDeviceAddressKHR;
+RE_RHI_EXPORT extern PFN_vkGetBufferOpaqueCaptureAddressKHR
+    vkGetBufferOpaqueCaptureAddressKHR;
+RE_RHI_EXPORT extern PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR
+    vkGetDeviceMemoryOpaqueCaptureAddressKHR;
+#endif // defined(VK_KHR_buffer_device_address)
+#if defined(VK_KHR_copy_commands2)
+RE_RHI_EXPORT extern PFN_vkCmdBlitImage2KHR vkCmdBlitImage2KHR;
+RE_RHI_EXPORT extern PFN_vkCmdCopyBuffer2KHR vkCmdCopyBuffer2KHR;
+RE_RHI_EXPORT extern PFN_vkCmdCopyBufferToImage2KHR vkCmdCopyBufferToImage2KHR;
+RE_RHI_EXPORT extern PFN_vkCmdCopyImage2KHR vkCmdCopyImage2KHR;
+RE_RHI_EXPORT extern PFN_vkCmdCopyImageToBuffer2KHR vkCmdCopyImageToBuffer2KHR;
+RE_RHI_EXPORT extern PFN_vkCmdResolveImage2KHR vkCmdResolveImage2KHR;
+#endif // defined(VK_KHR_copy_commands2)
+#if defined(VK_KHR_create_renderpass2)
+RE_RHI_EXPORT extern PFN_vkCmdBeginRenderPass2KHR vkCmdBeginRenderPass2KHR;
+RE_RHI_EXPORT extern PFN_vkCmdEndRenderPass2KHR vkCmdEndRenderPass2KHR;
+RE_RHI_EXPORT extern PFN_vkCmdNextSubpass2KHR vkCmdNextSubpass2KHR;
+RE_RHI_EXPORT extern PFN_vkCreateRenderPass2KHR vkCreateRenderPass2KHR;
+#endif // defined(VK_KHR_create_renderpass2)
+#if defined(VK_KHR_deferred_host_operations)
+RE_RHI_EXPORT extern PFN_vkCreateDeferredOperationKHR vkCreateDeferredOperationKHR;
+RE_RHI_EXPORT extern PFN_vkDeferredOperationJoinKHR vkDeferredOperationJoinKHR;
+RE_RHI_EXPORT extern PFN_vkDestroyDeferredOperationKHR vkDestroyDeferredOperationKHR;
+RE_RHI_EXPORT extern PFN_vkGetDeferredOperationMaxConcurrencyKHR
+    vkGetDeferredOperationMaxConcurrencyKHR;
+RE_RHI_EXPORT extern PFN_vkGetDeferredOperationResultKHR vkGetDeferredOperationResultKHR;
+#endif // defined(VK_KHR_deferred_host_operations)
+#if defined(VK_KHR_descriptor_update_template)
+RE_RHI_EXPORT extern PFN_vkCreateDescriptorUpdateTemplateKHR
+    vkCreateDescriptorUpdateTemplateKHR;
+RE_RHI_EXPORT extern PFN_vkDestroyDescriptorUpdateTemplateKHR
+    vkDestroyDescriptorUpdateTemplateKHR;
+RE_RHI_EXPORT extern PFN_vkUpdateDescriptorSetWithTemplateKHR
+    vkUpdateDescriptorSetWithTemplateKHR;
+#endif // defined(VK_KHR_descriptor_update_template)
+#if defined(VK_KHR_device_group)
+RE_RHI_EXPORT extern PFN_vkCmdDispatchBaseKHR vkCmdDispatchBaseKHR;
+RE_RHI_EXPORT extern PFN_vkCmdSetDeviceMaskKHR vkCmdSetDeviceMaskKHR;
+RE_RHI_EXPORT extern PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR
+    vkGetDeviceGroupPeerMemoryFeaturesKHR;
+#endif // defined(VK_KHR_device_group)
+#if defined(VK_KHR_device_group_creation)
+RE_RHI_EXPORT extern PFN_vkEnumeratePhysicalDeviceGroupsKHR
+    vkEnumeratePhysicalDeviceGroupsKHR;
+#endif // defined(VK_KHR_device_group_creation)
+#if defined(VK_KHR_display)
+RE_RHI_EXPORT extern PFN_vkCreateDisplayModeKHR vkCreateDisplayModeKHR;
+RE_RHI_EXPORT extern PFN_vkCreateDisplayPlaneSurfaceKHR vkCreateDisplayPlaneSurfaceKHR;
+RE_RHI_EXPORT extern PFN_vkGetDisplayModePropertiesKHR vkGetDisplayModePropertiesKHR;
+RE_RHI_EXPORT extern PFN_vkGetDisplayPlaneCapabilitiesKHR
+    vkGetDisplayPlaneCapabilitiesKHR;
+RE_RHI_EXPORT extern PFN_vkGetDisplayPlaneSupportedDisplaysKHR
+    vkGetDisplayPlaneSupportedDisplaysKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR
+    vkGetPhysicalDeviceDisplayPlanePropertiesKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceDisplayPropertiesKHR
+    vkGetPhysicalDeviceDisplayPropertiesKHR;
+#endif // defined(VK_KHR_display)
+#if defined(VK_KHR_display_swapchain)
+RE_RHI_EXPORT extern PFN_vkCreateSharedSwapchainsKHR vkCreateSharedSwapchainsKHR;
+#endif // defined(VK_KHR_display_swapchain)
+#if defined(VK_KHR_draw_indirect_count)
+RE_RHI_EXPORT extern PFN_vkCmdDrawIndexedIndirectCountKHR
+    vkCmdDrawIndexedIndirectCountKHR;
+RE_RHI_EXPORT extern PFN_vkCmdDrawIndirectCountKHR vkCmdDrawIndirectCountKHR;
+#endif // defined(VK_KHR_draw_indirect_count)
+#if defined(VK_KHR_dynamic_rendering)
+RE_RHI_EXPORT extern PFN_vkCmdBeginRenderingKHR vkCmdBeginRenderingKHR;
+RE_RHI_EXPORT extern PFN_vkCmdEndRenderingKHR vkCmdEndRenderingKHR;
+#endif // defined(VK_KHR_dynamic_rendering)
+#if defined(VK_KHR_external_fence_capabilities)
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR
+    vkGetPhysicalDeviceExternalFencePropertiesKHR;
+#endif // defined(VK_KHR_external_fence_capabilities)
+#if defined(VK_KHR_external_fence_fd)
+RE_RHI_EXPORT extern PFN_vkGetFenceFdKHR vkGetFenceFdKHR;
+RE_RHI_EXPORT extern PFN_vkImportFenceFdKHR vkImportFenceFdKHR;
+#endif // defined(VK_KHR_external_fence_fd)
+#if defined(VK_KHR_external_fence_win32)
+RE_RHI_EXPORT extern PFN_vkGetFenceWin32HandleKHR vkGetFenceWin32HandleKHR;
+RE_RHI_EXPORT extern PFN_vkImportFenceWin32HandleKHR vkImportFenceWin32HandleKHR;
+#endif // defined(VK_KHR_external_fence_win32)
+#if defined(VK_KHR_external_memory_capabilities)
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR
+    vkGetPhysicalDeviceExternalBufferPropertiesKHR;
+#endif // defined(VK_KHR_external_memory_capabilities)
+#if defined(VK_KHR_external_memory_fd)
+RE_RHI_EXPORT extern PFN_vkGetMemoryFdKHR vkGetMemoryFdKHR;
+RE_RHI_EXPORT extern PFN_vkGetMemoryFdPropertiesKHR vkGetMemoryFdPropertiesKHR;
+#endif // defined(VK_KHR_external_memory_fd)
+#if defined(VK_KHR_external_memory_win32)
+RE_RHI_EXPORT extern PFN_vkGetMemoryWin32HandleKHR vkGetMemoryWin32HandleKHR;
+RE_RHI_EXPORT extern PFN_vkGetMemoryWin32HandlePropertiesKHR
+    vkGetMemoryWin32HandlePropertiesKHR;
+#endif // defined(VK_KHR_external_memory_win32)
+#if defined(VK_KHR_external_semaphore_capabilities)
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR
+    vkGetPhysicalDeviceExternalSemaphorePropertiesKHR;
+#endif // defined(VK_KHR_external_semaphore_capabilities)
+#if defined(VK_KHR_external_semaphore_fd)
+RE_RHI_EXPORT extern PFN_vkGetSemaphoreFdKHR vkGetSemaphoreFdKHR;
+RE_RHI_EXPORT extern PFN_vkImportSemaphoreFdKHR vkImportSemaphoreFdKHR;
+#endif // defined(VK_KHR_external_semaphore_fd)
+#if defined(VK_KHR_external_semaphore_win32)
+RE_RHI_EXPORT extern PFN_vkGetSemaphoreWin32HandleKHR vkGetSemaphoreWin32HandleKHR;
+RE_RHI_EXPORT extern PFN_vkImportSemaphoreWin32HandleKHR vkImportSemaphoreWin32HandleKHR;
+#endif // defined(VK_KHR_external_semaphore_win32)
+#if defined(VK_KHR_fragment_shading_rate)
+RE_RHI_EXPORT extern PFN_vkCmdSetFragmentShadingRateKHR vkCmdSetFragmentShadingRateKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR
+    vkGetPhysicalDeviceFragmentShadingRatesKHR;
+#endif // defined(VK_KHR_fragment_shading_rate)
+#if defined(VK_KHR_get_display_properties2)
+RE_RHI_EXPORT extern PFN_vkGetDisplayModeProperties2KHR vkGetDisplayModeProperties2KHR;
+RE_RHI_EXPORT extern PFN_vkGetDisplayPlaneCapabilities2KHR
+    vkGetDisplayPlaneCapabilities2KHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceDisplayPlaneProperties2KHR
+    vkGetPhysicalDeviceDisplayPlaneProperties2KHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceDisplayProperties2KHR
+    vkGetPhysicalDeviceDisplayProperties2KHR;
+#endif // defined(VK_KHR_get_display_properties2)
+#if defined(VK_KHR_get_memory_requirements2)
+RE_RHI_EXPORT extern PFN_vkGetBufferMemoryRequirements2KHR
+    vkGetBufferMemoryRequirements2KHR;
+RE_RHI_EXPORT extern PFN_vkGetImageMemoryRequirements2KHR
+    vkGetImageMemoryRequirements2KHR;
+RE_RHI_EXPORT extern PFN_vkGetImageSparseMemoryRequirements2KHR
+    vkGetImageSparseMemoryRequirements2KHR;
+#endif // defined(VK_KHR_get_memory_requirements2)
+#if defined(VK_KHR_get_physical_device_properties2)
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceFeatures2KHR vkGetPhysicalDeviceFeatures2KHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceFormatProperties2KHR
+    vkGetPhysicalDeviceFormatProperties2KHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceImageFormatProperties2KHR
+    vkGetPhysicalDeviceImageFormatProperties2KHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceMemoryProperties2KHR
+    vkGetPhysicalDeviceMemoryProperties2KHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceProperties2KHR
+    vkGetPhysicalDeviceProperties2KHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR
+    vkGetPhysicalDeviceQueueFamilyProperties2KHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR
+    vkGetPhysicalDeviceSparseImageFormatProperties2KHR;
+#endif // defined(VK_KHR_get_physical_device_properties2)
+#if defined(VK_KHR_get_surface_capabilities2)
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR
+    vkGetPhysicalDeviceSurfaceCapabilities2KHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceSurfaceFormats2KHR
+    vkGetPhysicalDeviceSurfaceFormats2KHR;
+#endif // defined(VK_KHR_get_surface_capabilities2)
+#if defined(VK_KHR_maintenance1)
+RE_RHI_EXPORT extern PFN_vkTrimCommandPoolKHR vkTrimCommandPoolKHR;
+#endif // defined(VK_KHR_maintenance1)
+#if defined(VK_KHR_maintenance3)
+RE_RHI_EXPORT extern PFN_vkGetDescriptorSetLayoutSupportKHR
+    vkGetDescriptorSetLayoutSupportKHR;
+#endif // defined(VK_KHR_maintenance3)
+#if defined(VK_KHR_maintenance4)
+RE_RHI_EXPORT extern PFN_vkGetDeviceBufferMemoryRequirementsKHR
+    vkGetDeviceBufferMemoryRequirementsKHR;
+RE_RHI_EXPORT extern PFN_vkGetDeviceImageMemoryRequirementsKHR
+    vkGetDeviceImageMemoryRequirementsKHR;
+RE_RHI_EXPORT extern PFN_vkGetDeviceImageSparseMemoryRequirementsKHR
+    vkGetDeviceImageSparseMemoryRequirementsKHR;
+#endif // defined(VK_KHR_maintenance4)
+#if defined(VK_KHR_performance_query)
+RE_RHI_EXPORT extern PFN_vkAcquireProfilingLockKHR vkAcquireProfilingLockKHR;
+RE_RHI_EXPORT extern PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR
+    vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR
+    vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR;
+RE_RHI_EXPORT extern PFN_vkReleaseProfilingLockKHR vkReleaseProfilingLockKHR;
+#endif // defined(VK_KHR_performance_query)
+#if defined(VK_KHR_pipeline_executable_properties)
+RE_RHI_EXPORT extern PFN_vkGetPipelineExecutableInternalRepresentationsKHR
+    vkGetPipelineExecutableInternalRepresentationsKHR;
+RE_RHI_EXPORT extern PFN_vkGetPipelineExecutablePropertiesKHR
+    vkGetPipelineExecutablePropertiesKHR;
+RE_RHI_EXPORT extern PFN_vkGetPipelineExecutableStatisticsKHR
+    vkGetPipelineExecutableStatisticsKHR;
+#endif // defined(VK_KHR_pipeline_executable_properties)
+#if defined(VK_KHR_present_wait)
+RE_RHI_EXPORT extern PFN_vkWaitForPresentKHR vkWaitForPresentKHR;
+#endif // defined(VK_KHR_present_wait)
+#if defined(VK_KHR_push_descriptor)
+RE_RHI_EXPORT extern PFN_vkCmdPushDescriptorSetKHR vkCmdPushDescriptorSetKHR;
+#endif // defined(VK_KHR_push_descriptor)
+#if(defined(VK_KHR_ray_tracing_maintenance1) && defined(VK_KHR_ray_tracing_pipeline))
+RE_RHI_EXPORT extern PFN_vkCmdTraceRaysIndirect2KHR vkCmdTraceRaysIndirect2KHR;
+#endif // (defined(VK_KHR_ray_tracing_maintenance1) && defined(VK_KHR_ray_tracing_pipeline))
+#if defined(VK_KHR_ray_tracing_pipeline)
+RE_RHI_EXPORT extern PFN_vkCmdSetRayTracingPipelineStackSizeKHR
+    vkCmdSetRayTracingPipelineStackSizeKHR;
+RE_RHI_EXPORT extern PFN_vkCmdTraceRaysIndirectKHR vkCmdTraceRaysIndirectKHR;
+RE_RHI_EXPORT extern PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR;
+RE_RHI_EXPORT extern PFN_vkCreateRayTracingPipelinesKHR vkCreateRayTracingPipelinesKHR;
+RE_RHI_EXPORT extern PFN_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR
+    vkGetRayTracingCaptureReplayShaderGroupHandlesKHR;
+RE_RHI_EXPORT extern PFN_vkGetRayTracingShaderGroupHandlesKHR
+    vkGetRayTracingShaderGroupHandlesKHR;
+RE_RHI_EXPORT extern PFN_vkGetRayTracingShaderGroupStackSizeKHR
+    vkGetRayTracingShaderGroupStackSizeKHR;
+#endif // defined(VK_KHR_ray_tracing_pipeline)
+#if defined(VK_KHR_sampler_ycbcr_conversion)
+RE_RHI_EXPORT extern PFN_vkCreateSamplerYcbcrConversionKHR
+    vkCreateSamplerYcbcrConversionKHR;
+RE_RHI_EXPORT extern PFN_vkDestroySamplerYcbcrConversionKHR
+    vkDestroySamplerYcbcrConversionKHR;
+#endif // defined(VK_KHR_sampler_ycbcr_conversion)
+#if defined(VK_KHR_shared_presentable_image)
+RE_RHI_EXPORT extern PFN_vkGetSwapchainStatusKHR vkGetSwapchainStatusKHR;
+#endif // defined(VK_KHR_shared_presentable_image)
+#if defined(VK_KHR_surface)
+RE_RHI_EXPORT extern PFN_vkDestroySurfaceKHR vkDestroySurfaceKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceSurfaceFormatsKHR
+    vkGetPhysicalDeviceSurfaceFormatsKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceSurfacePresentModesKHR
+    vkGetPhysicalDeviceSurfacePresentModesKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceSurfaceSupportKHR
+    vkGetPhysicalDeviceSurfaceSupportKHR;
+#endif // defined(VK_KHR_surface)
+#if defined(VK_KHR_swapchain)
+RE_RHI_EXPORT extern PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR;
+RE_RHI_EXPORT extern PFN_vkCreateSwapchainKHR vkCreateSwapchainKHR;
+RE_RHI_EXPORT extern PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR;
+RE_RHI_EXPORT extern PFN_vkGetSwapchainImagesKHR vkGetSwapchainImagesKHR;
+RE_RHI_EXPORT extern PFN_vkQueuePresentKHR vkQueuePresentKHR;
+#endif // defined(VK_KHR_swapchain)
+#if defined(VK_KHR_synchronization2)
+RE_RHI_EXPORT extern PFN_vkCmdPipelineBarrier2KHR vkCmdPipelineBarrier2KHR;
+RE_RHI_EXPORT extern PFN_vkCmdResetEvent2KHR vkCmdResetEvent2KHR;
+RE_RHI_EXPORT extern PFN_vkCmdSetEvent2KHR vkCmdSetEvent2KHR;
+RE_RHI_EXPORT extern PFN_vkCmdWaitEvents2KHR vkCmdWaitEvents2KHR;
+RE_RHI_EXPORT extern PFN_vkCmdWriteTimestamp2KHR vkCmdWriteTimestamp2KHR;
+RE_RHI_EXPORT extern PFN_vkQueueSubmit2KHR vkQueueSubmit2KHR;
+#endif // defined(VK_KHR_synchronization2)
+#if(defined(VK_KHR_synchronization2) && defined(VK_AMD_buffer_marker))
+RE_RHI_EXPORT extern PFN_vkCmdWriteBufferMarker2AMD vkCmdWriteBufferMarker2AMD;
+#endif // (defined(VK_KHR_synchronization2) && defined(VK_AMD_buffer_marker))
+#if(defined(VK_KHR_synchronization2) && defined(VK_NV_device_diagnostic_checkpoints))
+RE_RHI_EXPORT extern PFN_vkGetQueueCheckpointData2NV vkGetQueueCheckpointData2NV;
+#endif // (defined(VK_KHR_synchronization2) && defined(VK_NV_device_diagnostic_checkpoints))
+#if defined(VK_KHR_timeline_semaphore)
+RE_RHI_EXPORT extern PFN_vkGetSemaphoreCounterValueKHR vkGetSemaphoreCounterValueKHR;
+RE_RHI_EXPORT extern PFN_vkSignalSemaphoreKHR vkSignalSemaphoreKHR;
+RE_RHI_EXPORT extern PFN_vkWaitSemaphoresKHR vkWaitSemaphoresKHR;
+#endif // defined(VK_KHR_timeline_semaphore)
+#if defined(VK_KHR_video_decode_queue)
+RE_RHI_EXPORT extern PFN_vkCmdDecodeVideoKHR vkCmdDecodeVideoKHR;
+#endif // defined(VK_KHR_video_decode_queue)
+#if defined(VK_KHR_video_encode_queue)
+RE_RHI_EXPORT extern PFN_vkCmdEncodeVideoKHR vkCmdEncodeVideoKHR;
+#endif // defined(VK_KHR_video_encode_queue)
+#if defined(VK_KHR_video_queue)
+RE_RHI_EXPORT extern PFN_vkBindVideoSessionMemoryKHR vkBindVideoSessionMemoryKHR;
+RE_RHI_EXPORT extern PFN_vkCmdBeginVideoCodingKHR vkCmdBeginVideoCodingKHR;
+RE_RHI_EXPORT extern PFN_vkCmdControlVideoCodingKHR vkCmdControlVideoCodingKHR;
+RE_RHI_EXPORT extern PFN_vkCmdEndVideoCodingKHR vkCmdEndVideoCodingKHR;
+RE_RHI_EXPORT extern PFN_vkCreateVideoSessionKHR vkCreateVideoSessionKHR;
+RE_RHI_EXPORT extern PFN_vkCreateVideoSessionParametersKHR
+    vkCreateVideoSessionParametersKHR;
+RE_RHI_EXPORT extern PFN_vkDestroyVideoSessionKHR vkDestroyVideoSessionKHR;
+RE_RHI_EXPORT extern PFN_vkDestroyVideoSessionParametersKHR
+    vkDestroyVideoSessionParametersKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR
+    vkGetPhysicalDeviceVideoCapabilitiesKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR
+    vkGetPhysicalDeviceVideoFormatPropertiesKHR;
+RE_RHI_EXPORT extern PFN_vkGetVideoSessionMemoryRequirementsKHR
+    vkGetVideoSessionMemoryRequirementsKHR;
+RE_RHI_EXPORT extern PFN_vkUpdateVideoSessionParametersKHR
+    vkUpdateVideoSessionParametersKHR;
+#endif // defined(VK_KHR_video_queue)
+#if defined(VK_KHR_wayland_surface)
+RE_RHI_EXPORT extern PFN_vkCreateWaylandSurfaceKHR vkCreateWaylandSurfaceKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR
+    vkGetPhysicalDeviceWaylandPresentationSupportKHR;
+#endif // defined(VK_KHR_wayland_surface)
+#if defined(VK_KHR_win32_surface)
+RE_RHI_EXPORT extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR
+    vkGetPhysicalDeviceWin32PresentationSupportKHR;
+#endif // defined(VK_KHR_win32_surface)
+#if defined(VK_KHR_xcb_surface)
+RE_RHI_EXPORT extern PFN_vkCreateXcbSurfaceKHR vkCreateXcbSurfaceKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR
+    vkGetPhysicalDeviceXcbPresentationSupportKHR;
+#endif // defined(VK_KHR_xcb_surface)
+#if defined(VK_KHR_xlib_surface)
+RE_RHI_EXPORT extern PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR
+    vkGetPhysicalDeviceXlibPresentationSupportKHR;
+#endif // defined(VK_KHR_xlib_surface)
+#if defined(VK_MVK_ios_surface)
+RE_RHI_EXPORT extern PFN_vkCreateIOSSurfaceMVK vkCreateIOSSurfaceMVK;
+#endif // defined(VK_MVK_ios_surface)
+#if defined(VK_MVK_macos_surface)
+RE_RHI_EXPORT extern PFN_vkCreateMacOSSurfaceMVK vkCreateMacOSSurfaceMVK;
+#endif // defined(VK_MVK_macos_surface)
+#if defined(VK_NN_vi_surface)
+RE_RHI_EXPORT extern PFN_vkCreateViSurfaceNN vkCreateViSurfaceNN;
+#endif // defined(VK_NN_vi_surface)
+#if defined(VK_NVX_binary_import)
+RE_RHI_EXPORT extern PFN_vkCmdCuLaunchKernelNVX vkCmdCuLaunchKernelNVX;
+RE_RHI_EXPORT extern PFN_vkCreateCuFunctionNVX vkCreateCuFunctionNVX;
+RE_RHI_EXPORT extern PFN_vkCreateCuModuleNVX vkCreateCuModuleNVX;
+RE_RHI_EXPORT extern PFN_vkDestroyCuFunctionNVX vkDestroyCuFunctionNVX;
+RE_RHI_EXPORT extern PFN_vkDestroyCuModuleNVX vkDestroyCuModuleNVX;
+#endif // defined(VK_NVX_binary_import)
+#if defined(VK_NVX_image_view_handle)
+RE_RHI_EXPORT extern PFN_vkGetImageViewAddressNVX vkGetImageViewAddressNVX;
+RE_RHI_EXPORT extern PFN_vkGetImageViewHandleNVX vkGetImageViewHandleNVX;
+#endif // defined(VK_NVX_image_view_handle)
+#if defined(VK_NV_acquire_winrt_display)
+RE_RHI_EXPORT extern PFN_vkAcquireWinrtDisplayNV vkAcquireWinrtDisplayNV;
+RE_RHI_EXPORT extern PFN_vkGetWinrtDisplayNV vkGetWinrtDisplayNV;
+#endif // defined(VK_NV_acquire_winrt_display)
+#if defined(VK_NV_clip_space_w_scaling)
+RE_RHI_EXPORT extern PFN_vkCmdSetViewportWScalingNV vkCmdSetViewportWScalingNV;
+#endif // defined(VK_NV_clip_space_w_scaling)
+#if defined(VK_NV_cooperative_matrix)
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesNV
+    vkGetPhysicalDeviceCooperativeMatrixPropertiesNV;
+#endif // defined(VK_NV_cooperative_matrix)
+#if defined(VK_NV_coverage_reduction_mode)
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV
+    vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV;
+#endif // defined(VK_NV_coverage_reduction_mode)
+#if defined(VK_NV_device_diagnostic_checkpoints)
+RE_RHI_EXPORT extern PFN_vkCmdSetCheckpointNV vkCmdSetCheckpointNV;
+RE_RHI_EXPORT extern PFN_vkGetQueueCheckpointDataNV vkGetQueueCheckpointDataNV;
+#endif // defined(VK_NV_device_diagnostic_checkpoints)
+#if defined(VK_NV_device_generated_commands)
+RE_RHI_EXPORT extern PFN_vkCmdBindPipelineShaderGroupNV vkCmdBindPipelineShaderGroupNV;
+RE_RHI_EXPORT extern PFN_vkCmdExecuteGeneratedCommandsNV vkCmdExecuteGeneratedCommandsNV;
+RE_RHI_EXPORT extern PFN_vkCmdPreprocessGeneratedCommandsNV
+    vkCmdPreprocessGeneratedCommandsNV;
+RE_RHI_EXPORT extern PFN_vkCreateIndirectCommandsLayoutNV
+    vkCreateIndirectCommandsLayoutNV;
+RE_RHI_EXPORT extern PFN_vkDestroyIndirectCommandsLayoutNV
+    vkDestroyIndirectCommandsLayoutNV;
+RE_RHI_EXPORT extern PFN_vkGetGeneratedCommandsMemoryRequirementsNV
+    vkGetGeneratedCommandsMemoryRequirementsNV;
+#endif // defined(VK_NV_device_generated_commands)
+#if defined(VK_NV_external_memory_capabilities)
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV
+    vkGetPhysicalDeviceExternalImageFormatPropertiesNV;
+#endif // defined(VK_NV_external_memory_capabilities)
+#if defined(VK_NV_external_memory_rdma)
+RE_RHI_EXPORT extern PFN_vkGetMemoryRemoteAddressNV vkGetMemoryRemoteAddressNV;
+#endif // defined(VK_NV_external_memory_rdma)
+#if defined(VK_NV_external_memory_win32)
+RE_RHI_EXPORT extern PFN_vkGetMemoryWin32HandleNV vkGetMemoryWin32HandleNV;
+#endif // defined(VK_NV_external_memory_win32)
+#if defined(VK_NV_fragment_shading_rate_enums)
+RE_RHI_EXPORT extern PFN_vkCmdSetFragmentShadingRateEnumNV
+    vkCmdSetFragmentShadingRateEnumNV;
+#endif // defined(VK_NV_fragment_shading_rate_enums)
+#if defined(VK_NV_mesh_shader)
+RE_RHI_EXPORT extern PFN_vkCmdDrawMeshTasksIndirectCountNV
+    vkCmdDrawMeshTasksIndirectCountNV;
+RE_RHI_EXPORT extern PFN_vkCmdDrawMeshTasksIndirectNV vkCmdDrawMeshTasksIndirectNV;
+RE_RHI_EXPORT extern PFN_vkCmdDrawMeshTasksNV vkCmdDrawMeshTasksNV;
+#endif // defined(VK_NV_mesh_shader)
+#if defined(VK_NV_ray_tracing)
+RE_RHI_EXPORT extern PFN_vkBindAccelerationStructureMemoryNV
+    vkBindAccelerationStructureMemoryNV;
+RE_RHI_EXPORT extern PFN_vkCmdBuildAccelerationStructureNV
+    vkCmdBuildAccelerationStructureNV;
+RE_RHI_EXPORT extern PFN_vkCmdCopyAccelerationStructureNV
+    vkCmdCopyAccelerationStructureNV;
+RE_RHI_EXPORT extern PFN_vkCmdTraceRaysNV vkCmdTraceRaysNV;
+RE_RHI_EXPORT extern PFN_vkCmdWriteAccelerationStructuresPropertiesNV
+    vkCmdWriteAccelerationStructuresPropertiesNV;
+RE_RHI_EXPORT extern PFN_vkCompileDeferredNV vkCompileDeferredNV;
+RE_RHI_EXPORT extern PFN_vkCreateAccelerationStructureNV vkCreateAccelerationStructureNV;
+RE_RHI_EXPORT extern PFN_vkCreateRayTracingPipelinesNV vkCreateRayTracingPipelinesNV;
+RE_RHI_EXPORT extern PFN_vkDestroyAccelerationStructureNV
+    vkDestroyAccelerationStructureNV;
+RE_RHI_EXPORT extern PFN_vkGetAccelerationStructureHandleNV
+    vkGetAccelerationStructureHandleNV;
+RE_RHI_EXPORT extern PFN_vkGetAccelerationStructureMemoryRequirementsNV
+    vkGetAccelerationStructureMemoryRequirementsNV;
+RE_RHI_EXPORT extern PFN_vkGetRayTracingShaderGroupHandlesNV
+    vkGetRayTracingShaderGroupHandlesNV;
+#endif // defined(VK_NV_ray_tracing)
+#if defined(VK_NV_scissor_exclusive)
+RE_RHI_EXPORT extern PFN_vkCmdSetExclusiveScissorNV vkCmdSetExclusiveScissorNV;
+#endif // defined(VK_NV_scissor_exclusive)
+#if defined(VK_NV_shading_rate_image)
+RE_RHI_EXPORT extern PFN_vkCmdBindShadingRateImageNV vkCmdBindShadingRateImageNV;
+RE_RHI_EXPORT extern PFN_vkCmdSetCoarseSampleOrderNV vkCmdSetCoarseSampleOrderNV;
+RE_RHI_EXPORT extern PFN_vkCmdSetViewportShadingRatePaletteNV
+    vkCmdSetViewportShadingRatePaletteNV;
+#endif // defined(VK_NV_shading_rate_image)
+#if defined(VK_QNX_screen_surface)
+RE_RHI_EXPORT extern PFN_vkCreateScreenSurfaceQNX vkCreateScreenSurfaceQNX;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDeviceScreenPresentationSupportQNX
+    vkGetPhysicalDeviceScreenPresentationSupportQNX;
+#endif // defined(VK_QNX_screen_surface)
+#if defined(VK_VALVE_descriptor_set_host_mapping)
+RE_RHI_EXPORT extern PFN_vkGetDescriptorSetHostMappingVALVE
+    vkGetDescriptorSetHostMappingVALVE;
+RE_RHI_EXPORT extern PFN_vkGetDescriptorSetLayoutHostMappingInfoVALVE
+    vkGetDescriptorSetLayoutHostMappingInfoVALVE;
+#endif // defined(VK_VALVE_descriptor_set_host_mapping)
+#if(defined(VK_EXT_full_screen_exclusive) && defined(VK_KHR_device_group)) || \
+    (defined(VK_EXT_full_screen_exclusive) && defined(VK_VERSION_1_1))
+RE_RHI_EXPORT extern PFN_vkGetDeviceGroupSurfacePresentModes2EXT
+    vkGetDeviceGroupSurfacePresentModes2EXT;
+#endif // (defined(VK_EXT_full_screen_exclusive) && defined(VK_KHR_device_group)) || (defined(VK_EXT_full_screen_exclusive) && defined(VK_VERSION_1_1))
+#if(defined(VK_KHR_descriptor_update_template) && defined(VK_KHR_push_descriptor)) || \
+    (defined(VK_KHR_push_descriptor) && defined(VK_VERSION_1_1)) ||                   \
+    (defined(VK_KHR_push_descriptor) && defined(VK_KHR_descriptor_update_template))
+RE_RHI_EXPORT extern PFN_vkCmdPushDescriptorSetWithTemplateKHR
+    vkCmdPushDescriptorSetWithTemplateKHR;
+#endif // (defined(VK_KHR_descriptor_update_template) && defined(VK_KHR_push_descriptor)) || (defined(VK_KHR_push_descriptor) && defined(VK_VERSION_1_1)) || (defined(VK_KHR_push_descriptor) && defined(VK_KHR_descriptor_update_template))
+#if(defined(VK_KHR_device_group) && defined(VK_KHR_surface)) || \
+    (defined(VK_KHR_swapchain) && defined(VK_VERSION_1_1))
+RE_RHI_EXPORT extern PFN_vkGetDeviceGroupPresentCapabilitiesKHR
+    vkGetDeviceGroupPresentCapabilitiesKHR;
+RE_RHI_EXPORT extern PFN_vkGetDeviceGroupSurfacePresentModesKHR
+    vkGetDeviceGroupSurfacePresentModesKHR;
+RE_RHI_EXPORT extern PFN_vkGetPhysicalDevicePresentRectanglesKHR
+    vkGetPhysicalDevicePresentRectanglesKHR;
+#endif // (defined(VK_KHR_device_group) && defined(VK_KHR_surface)) || (defined(VK_KHR_swapchain) && defined(VK_VERSION_1_1))
+#if(defined(VK_KHR_device_group) && defined(VK_KHR_swapchain)) || \
+    (defined(VK_KHR_swapchain) && defined(VK_VERSION_1_1))
+RE_RHI_EXPORT extern PFN_vkAcquireNextImage2KHR vkAcquireNextImage2KHR;
+#endif // (defined(VK_KHR_device_group) && defined(VK_KHR_swapchain)) || (defined(VK_KHR_swapchain) && defined(VK_VERSION_1_1))
+
+}
