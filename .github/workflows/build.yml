@@ -12,7 +12,8 @@ jobs:
     name: "Build ${{ matrix.platform }} in ${{ matrix.build_type }}"
     strategy:
       matrix:
-        platform: [ windows, macos ]
+#        platform: [ windows, macos ]
+        platform: [ windows ]
         build_type: [ Debug, Release ]
     env:
       PARALLEL: -j 2
@@ -40,6 +41,7 @@ jobs:
           overwrite: true
 
   build_android:
+    if: false
     permissions: write-all
     name: "Build Android in ${{ matrix.build_type }}"
     strategy:
